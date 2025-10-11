@@ -1,0 +1,141 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+@layer base {
+  * {
+    @apply caret-transparent;
+  }
+}
+input,
+textarea,
+[contenteditable="true"] {
+  caret-color: auto;
+}
+body,
+#root {
+  /* display: flex;
+  flex-direction: column; */
+  min-height: 100vh;
+  min-width: 100vw;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  margin-right: -1px;
+}
+/* HTML: <div class="loader"></div> */
+.loader {
+  /* width: 50px; */
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(farthest-side, #fff 94%, #0000) top/8px 8px
+      no-repeat,
+    /* conic-gradient(#0000 30%, #ffa516); */ conic-gradient(#0000 30%, #fff);
+  -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
+  animation: l13 1s infinite linear;
+}
+
+@keyframes l13 {
+  100% {
+    transform: rotate(1turn);
+  }
+}
+@keyframes bgSlide {
+  0% {
+    background-image: url("bgWhite.jpg");
+  }
+  20% {
+    /* background-image: url("glacierBgOrange.jpg"); */
+    background-image: url("/backgroundDiffOrange.jpg");
+  }
+  40% {
+    background-image: url("/bgBlack.jpg");
+  }
+  60% {
+    background-image: url("redBikeBg.jpg");
+  }
+  80% {
+    background-image: url("glacierBgOrange.jpg");
+  }
+  100% {
+    background-image: url("redBikeBg.jpg");
+    /* background-image: url("https://res.cloudinary.com/dumreogj3/image/upload/v1758445600/redBgBike_i1mcer.jpg"); */
+  }
+}
+
+.animate-bgSlide {
+  animation: bgSlide 25s infinite ease-in-out;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fadeInUp {
+  animation-name: fadeInUp;
+  animation-duration: 0.7s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: forwards;
+}
+.animation-fill-forwards {
+  animation-fill-mode: forwards;
+}
+.animation-delay-100 {
+  animation-delay: 0.1s;
+}
+.animation-delay-200 {
+  animation-delay: 0.2s;
+}
+.animation-delay-300 {
+  animation-delay: 0.3s;
+}
+.animation-delay-400 {
+  animation-delay: 0.4s;
+}
+.animation-delay-500 {
+  animation-delay: 0.5s;
+}
+/* @keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(20px);
+  animation-fill-mode: forwards;
+}
+
+.fade-in-up.animate {
+  animation-name: fadeInUp;
+  animation-duration: 700ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+} */
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(20px);
+  animation-fill-mode: forwards;
+  animation-name: fadeInUp;
+  animation-duration: 0.5s;
+  animation-timing-function: ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

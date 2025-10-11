@@ -1,0 +1,420 @@
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+interface UserInfo {
+  id: string;
+  name: string;
+  email: string;
+  avatarUrl?: string;
+  token?: string;
+}
+
+interface UserState {
+  userInfo: UserInfo | null;
+  isLoggedIn: boolean;
+  loading: boolean;
+  error: string | null;
+}
+
+const initialState: UserState = {
+  userInfo: null,
+  isLoggedIn: false,
+  loading: false,
+  error: null,
+};
+
+const userSlice = createSlice({
+  name: 'user',
+  initialState,
+  reducers: {
+    fetchUser Start(state) {
+      state.loading = true;
+      state.error = null;
+    },
+    fetchUser Success(state, action: PayloadAction<UserInfo>) {
+      state.userInfo = action.payload;
+      state.isLoggedIn = true;
+      state.loading = false;
+      state.error = null;
+    },
+    fetchUser Failure(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    logout(state) {
+      state.userInfo = null;
+      state.isLoggedIn = false;
+      state.loading = false;
+      state.error = null;
+    },
+    updateUser Info(state, action: PayloadAction<Partial<UserInfo>>) {
+      if (state.userInfo) {
+        state.userInfo = { ...state.userInfo, ...action.payload };
+      }
+    },
+  },
+});
+
+export const {
+  fetchUser Start,
+  fetchUser Success,
+  fetchUser Failure,
+  logout,
+  updateUser Info,
+} = userSlice.actions;
+
+export default userSlice.reducer;
+tsx
+// src/store/userSlice.ts
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+
+// Define the shape of user info
+export interface UserInfo {
+  id: string;
+  name: string;
+  email: string;
+  avatarUrl?: string;
+  // Add other fields as needed
+}
+
+// Define the slice state
+interface UserState {
+  userInfo: UserInfo | null;
+  isLoggedIn: boolean;
+  loading: boolean;
+  error: string | null;
+}
+
+// Initial state
+const initialState: UserState = {
+  userInfo: null,
+  isLoggedIn: false,
+  loading: false,
+  error: null,
+};
+
+// Async thunk to fetch current user info (e.g., on app load)
+export const fetchCurrentUser  = createAsyncThunk<
+  UserInfo, // Return type of payload creator
+  void,     // Argument type (none)
+  { rejectValue: string }
+>('user/fetchCurrentUser ', async (_, { rejectWithValue }) => {
+  try {
+    const response = await fetch('/api/auth/me', {
+      credentials: 'include', // send cookies
+    });
+    if (!response.ok) {
+      return rejectWithValue('Not authenticated');
+    }
+    const data: UserInfo = await response.json();
+    return data;
+  } catch (error) {
+    return rejectWithValue('Failed to fetch user');
+  }
+});
+
+// Async thunk to login user
+export const loginUser  = createAsyncThunk<
+  UserInfo,
+  { email: string; password: string },
+  { rejectValue: string }
+>('user/loginUser ', async (credentials, { rejectWithValue }) => {
+  try {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(credentials),
+      credentials: 'include', // important for cookies
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      return rejectWithValue(errorData.message || 'Login failed');
+    }
+    const data: UserInfo = await response.json();
+    return data;
+  } catch (error) {
+    return rejectWithValue('Login request failed');
+  }
+});
+
+const userSlice = createSlice({
+  name: 'user',
+  initialState,
+  reducers: {
+    logout(state) {
+      state.userInfo = null;
+      state.isLoggedIn = false;
+      state.loading = false;
+      state.error = null;
+    },
+    clearError(state) {
+      state.error = null;
+    },
+  },
+  extraReducers: (builder) => {
+    // fetchCurrentUser 
+    builder.addCase(fetchCurrentUser .pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(fetchCurrentUser .fulfilled, (state, action: PayloadAction<UserInfo>) => {
+      state.userInfo = action.payload;
+      state.isLoggedIn = true;
+      state.loading = false;
+      state.error = null;
+    });
+    builder.addCase(fetchCurrentUser .rejected, (state, action) => {
+      state.loading = false;
+      state.isLoggedIn = false;
+      state.userInfo = null;
+      state.error = action.payload || 'Failed to fetch user';
+    });
+
+    // loginUser 
+    builder.addCase(loginUser .pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(loginUser .fulfilled, (state, action: PayloadAction<UserInfo>) => {
+      state.userInfo = action.payload;
+      state.isLoggedIn = true;
+      state.loading = false;
+      state.error = null;
+    });
+    builder.addCase(loginUser .rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || 'Login failed';
+    });
+  },
+});
+
+export const { logout, clearError } = userSlice.actions;
+
+export default userSlice.reducer;
+
+
+
+
+
+
+import React from "react";
+import { Link } from "react-router-dom";
+
+// AboutUsPremium.tsx
+// TypeScript + React + Tailwind CSS
+
+export default function AboutUsPremium() {
+  return (
+    <main className="min-h-screen text-gray-900 dark:bg-gray-900 transition-colors duration-500 dark:text-gray-100">
+      {/* HERO */}
+      <section className="w-full relative">
+        <div className="h-64 md:h-[400px] w-full overflow-hidden rounded-b-2xl">
+          <img
+            // src="https://res.cloudinary.com/dumreogj3/image/upload/v1758446368/image_wc55eo.png"
+            src="https://res.cloudinary.com/dumreogj3/image/upload/v1758446656/image_1_hufygx.png"
+            alt="Premium scooter hero"
+            className="w-full h-full object-cover object-center opacity-50"
+          />
+        </div>
+
+        {/* Tagline Overlay */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <h1 className="text-3xl md:text-5xl font-extrabold text-black-500 drop-shadow-lg text-center px-4 ">
+            Ride Easy, Ride Smart
+          </h1>
+        </div>
+      </section>
+
+      {/* CONTENT WRAPPER */}
+      <section className="w-full py-12 px-4 md:px-6">
+        {/* Our Story + Illustration */}
+        <div className="grid md:grid-cols-2 gap-10 items-center">
+          <div>
+            <h1 className="text-4xl md:text-5xl font-extrabold leading-tight text-orange-500">
+              Our Story
+            </h1>
+            <p className="mt-6 text-lg md:text-xl leading-relaxed text-gray-700">
+              We started with a simple belief: city mobility should be
+              effortless, safe, and elegantly designed. From a small local fleet
+              to a thoughtfully curated rental experience, our goal has remained
+              the same — make short trips smarter.
+            </p>
+            <p className="mt-4 text-base text-gray-600">
+              We combine modern vehicles, intuitive booking and white-glove
+              maintenance to give you a reliable ride whenever you need it.
+            </p>
+          </div>
+
+          <div className="flex justify-center md:justify-end">
+            <img
+              src="https://res.cloudinary.com/dumreogj3/image/upload/v1758445611/photo_2025-09-21_14-36-06_h1w9uu.jpg"
+              alt="Illustration of a rider on a bike"
+              className="w-64 md:w-80 lg:w-96"
+            />
+          </div>
+        </div>
+
+        {/* Mission + Vision Cards */}
+        <div className="mt-12 grid sm:grid-cols-2 gap-6">
+          <div className="rounded-2xl p-6 shadow-md border border-gray-200">
+            <h3 className="text-2xl font-semibold text-orange-500">
+              Our Mission
+            </h3>
+            <p className="mt-4 text-gray-600">
+              To provide seamless, affordable and sustainable short-distance
+              mobility options that make everyday travel effortless.
+            </p>
+          </div>
+
+          <div className="rounded-2xl p-6 shadow-md border border-gray-200">
+            <h3 className="text-2xl font-semibold text-orange-500">
+              Our Vision
+            </h3>
+            <p className="mt-4 text-gray-600">
+              To shape urban mobility where convenience meets responsibility — a
+              future with smarter streets and happier riders.
+            </p>
+          </div>
+        </div>
+
+        {/* Why Choose Us */}
+        <section className="w-full py-16">
+          <div className="max-w-6xl mx-auto px-4">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-center text-orange-500">
+              What You Get
+            </h2>
+            <p className="mt-3 text-gray-600 text-center">
+              Every ride includes comfort, safety, and complete peace of mind.
+            </p>
+
+            <div className="mt-12 grid gap-8 grid-cols-1 md:grid-cols-2">
+              {/* Card 1 */}
+              <div className="p-8 rounded-2xl shadow-xl text-center bg-gradient-to-br from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 transition-all duration-300 transform hover:-translate-y-2 hover:scale-105">
+                <div className="mx-auto w-16 h-16 flex items-center justify-center rounded-full bg-white shadow-md text-3xl">
+                  🪖
+                </div>
+                <h3 className="mt-5 text-xl font-bold">Free Helmet</h3>
+                <p className="mt-3 text-gray-600">
+                  Complimentary helmet with every booking.
+                </p>
+              </div>
+
+              {/* Card 2 */}
+              <div className="p-8 rounded-2xl shadow-xl text-center bg-gradient-to-br from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 transition-all duration-300 transform hover:-translate-y-2 hover:scale-105">
+                <div className="mx-auto w-16 h-16 flex items-center justify-center rounded-full bg-white shadow-md text-3xl">
+                  🧴
+                </div>
+                <h3 className="mt-5 text-xl font-bold">Sanitized Vehicle</h3>
+                <p className="mt-3 text-gray-600">
+                  Cleaned & disinfected before every ride.
+                </p>
+              </div>
+
+              {/* Card 3 */}
+              <div className="p-8 rounded-2xl shadow-xl text-center bg-gradient-to-br from-yellow-50 to-yellow-100 hover:from-yellow-100 hover:to-yellow-200 transition-all duration-300 transform hover:-translate-y-2 hover:scale-105">
+                <div className="mx-auto w-16 h-16 flex items-center justify-center rounded-full bg-white shadow-md text-3xl">
+                  💳
+                </div>
+                <h3 className="mt-5 text-xl font-bold">Secure Payments</h3>
+                <p className="mt-3 text-gray-600">
+                  100% safe & encrypted transactions.
+                </p>
+              </div>
+
+              {/* Card 4 */}
+              <div className="p-8 rounded-2xl shadow-xl text-center bg-gradient-to-br from-pink-50 to-pink-100 hover:from-pink-100 hover:to-pink-200 transition-all duration-300 transform hover:-translate-y-2 hover:scale-105">
+                <div className="mx-auto w-16 h-16 flex items-center justify-center rounded-full bg-white shadow-md text-3xl">
+                  ⚡
+                </div>
+                <h3 className="mt-5 text-xl font-bold">Quick Pickup</h3>
+                <p className="mt-3 text-gray-600">
+                  Fast & hassle-free pickup and drop.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-20 bg-white">
+          <div className="max-w-6xl mx-auto px-6 text-center">
+            <h2 className="text-4xl font-bold text-orange-500 mb-16">
+              Meet Our Team
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+              <div className="text-center">
+                <img
+                  className="w-32 h-32 rounded-full mx-auto mb-6 shadow-lg"
+                  src="https://res.cloudinary.com/dumreogj3/image/upload/v1758366879/3551739_doqg3u.jpg"
+                  alt="Alex Chen"
+                />
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Alex Chen
+                </h3>
+                <p className="text-blue-600 font-medium mb-3">Founder</p>
+                <p className="text-gray-600 text-sm">
+                  Former hotel manager. Inspects every property personally.
+                  Loves hiking with his dog Luna.
+                </p>
+              </div>
+
+              <div className="text-center">
+                <img
+                  className="w-32 h-32 rounded-full mx-auto mb-6 shadow-lg"
+                  src="https://res.cloudinary.com/dumreogj3/image/upload/v1758366879/3551739_doqg3u.jpg"
+                  alt="Maya Rodriguez"
+                />
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Maya Rodriguez
+                </h3>
+                <p className="text-green-600 font-medium mb-3">Support Lead</p>
+                <p className="text-gray-600 text-sm">
+                  Former Airbnb host. Built our 24/7 emergency system. Coffee
+                  lover and problem solver.
+                </p>
+              </div>
+
+              <div className="text-center">
+                <img
+                  className="w-32 h-32 rounded-full mx-auto mb-6 shadow-lg"
+                  src="https://res.cloudinary.com/dumreogj3/image/upload/v1758366879/3551739_doqg3u.jpg"
+                  alt="David Park"
+                />
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  David Park
+                </h3>
+                <p className="text-purple-600 font-medium mb-3">Tech Lead</p>
+                <p className="text-gray-600 text-sm">
+                  Silicon Valley engineer. Built our verification system. Loves
+                  coding and good design.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <div className="mt-16 rounded-2xl p-8 shadow-lg flex flex-col items-center text-center border border-gray-200">
+          <h3 className="text-3xl md:text-4xl font-extrabold text-orange-500">
+            Start your ride today
+          </h3>
+          <p className="mt-3 text-gray-600 max-w-2xl">
+            Explore our fleet and choose a ride that fits your day. Quick
+            pickup, simple pricing and dependable vehicles — ready when you are.
+          </p>
+
+          <div className="mt-6">
+            <Link
+              to="/vehicle"
+              className="inline-block px-8 py-3 rounded-xl font-semibold text-white bg-orange-500 hover:bg-orange-600 transition"
+            >
+              Explore our services
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer spacing */}
+      <div className="h-12" />
+    </main>
+  );
+}

@@ -1,0 +1,650 @@
+import { Link } from "react-router-dom";
+
+const CustomerReview = () => {
+  const items = [
+    {
+      image: "Male1.jpg",
+      name: "Nikhil",
+      rating: 4,
+      review:
+        "Amazing service! The bike was in perfect condition and thebooking process was super smooth. Highly recommended!",
+    },
+    {
+      image: "/Male1.jpg",
+      name: "Nikhil",
+      rating: 4,
+      review:
+        "Amazing service! The bike was in perfect condition and thebooking process was super smooth. Highly recommended! ",
+    },
+    {
+      image: "/Female.jpg",
+      name: "Jyoti",
+      rating: 5,
+      review:
+        "Amazing service! The bike was in perfect condition and thebooking process was super smooth. Highly recommended!",
+    },
+  ];
+  return (
+    <>
+      <section className="py-12 dark:bg-gray-900 dark:text-white">
+        <h2 className="text-center text-2xl font-bold text-gray-800 mb-8 dark:text-yellow-600 ">
+          What Our Customers Say
+        </h2>
+
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 px-4 ">
+          {items.map((item, idx) => (
+            <div
+              key={idx}
+              className="bg-white dark:bg-gray-900 rounded-lg shadow p-6 text-center dark:border-1 dark:border-gray-600"
+            >
+              <div className="flex justify-center mb-2">
+                <img
+                  src={item.image}
+                  alt="avatar"
+                  className="w-12 h-12 rounded-full"
+                />
+              </div>
+              <h3 className="font-semibold text-gray-800 dark:text-white">
+                {item.name}
+              </h3>
+              <div className="flex justify-center my-2 text-yellow-500">
+                {item.rating}/5
+              </div>
+              <p className="text-gray-600 text-sm dark:text-white">
+                "{item.review}"
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-gray-800 text-white py-12 dark:bg-gray-900">
+        <div className="max-w-3xl mx-auto text-center px-4">
+          <h2 className="text-2xl font-bold mb-4">Ready to Hit the Road?</h2>
+          <p className="text-gray-300 mb-6">
+            Join thousands of satisfied customers who trust BookMyBike for their
+            rental needs. Book your perfect ride today!
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              to="vehicle"
+              className="px-6 py-3 border-1 border-gray-400   text-gray-400 font-semibold rounded-lg shadow hover:bg-gray-700 transition flex items-center justify-center gap-2"
+            >
+              🔍 Browse Vehicles
+            </Link>
+            <a
+              // https://wa.me/.... whatsapp tel for call
+
+              href=" https://wa.me/91999999999"
+              target="_blank"
+              className="px-6 py-3  font-semibold rounded-lg shadow hover:bg-yellow-700 transition flex items-center bg-yellow-600 justify-center gap-2"
+            >
+              📞 Call Us Now
+            </a>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+};
+export default CustomerReview;
+// Review
+
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
+
+const CustomerReview = () => {
+  const [feedback, setFeedback] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  // const pageLimit = 5; // items per page
+
+  useEffect(() => {
+    const fetchFeedback = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get(
+          `http://localhost:5000/api/get/users/feedback?page=${page}`
+        );
+        setFeedback(res.data);
+        setTotalPages(4);
+      } catch (err) {
+        console.error("Error fetching feedback:", err);
+      }
+      setLoading(false);
+    };
+
+    fetchFeedback();
+  }, [page]);
+
+  return (
+    <div>
+      {/* // <div className="max-w-xl mx-auto p-6"> */}
+      {/* // <h2 className="text-2xl font-bold mb-4 text-gray-800">Feedback</h2> */}
+
+      {loading ? (
+        <p className="text-center text-gray-500 italic">Loading...</p>
+      ) : (
+        <section className="py-12 dark:bg-gray-900 dark:text-white">
+          <h2 className="text-center text-2xl font-bold text-gray-800 mb-8 dark:text-yellow-600 ">
+            What Our Customers Say
+          </h2>
+          <div className="flex justify-center items-center gap-2 mt-6">
+            <button
+              disabled={page === 1}
+              onClick={() => setPage(page - 1)}
+              className={`px-3 py-1 rounded-md border ${
+                page === 1
+                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  : "bg-white hover:bg-gray-100 text-gray-700"
+              }`}
+            >
+              ◀ Prev
+            </button>
+
+            {/* {[...Array(3)].map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setPage(i + 1)}
+            className={`px-3 py-1 rounded-md border ${
+              page === i + 1
+                ? "bg-blue-500 text-white border-blue-500"
+                : "bg-white hover:bg-gray-100 text-gray-700"
+            }`}
+          >
+            {i + 1}
+          </button>
+        ))} */}
+
+            <button
+              disabled={page === totalPages}
+              onClick={() => setPage(page + 1)}
+              className={`px-3 py-1 rounded-md border ${
+                page === totalPages
+                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  : "bg-white hover:bg-gray-100 text-gray-700"
+              }`}
+            >
+              Next ▶
+            </button>
+          </div>
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 px-4 ">
+            {feedback.map((item, idx) => (
+              <div
+                key={idx}
+                className="bg-white dark:bg-gray-900 rounded-lg shadow p-6 text-center dark:border-1 dark:border-gray-600"
+              >
+                <div className="flex justify-center mb-2">
+                  <img
+                    src="/WhatsApp Image 2025-08-25 at 21.37.48_ec58ca97.jpg"
+                    alt="avatar"
+                    className="w-12 h-12 rounded-full"
+                  />
+                </div>
+                <h3 className="font-semibold text-gray-800 dark:text-white">
+                  {item.username}
+                </h3>
+                <div className="flex justify-center my-2 text-yellow-500">
+                  {item.rating}/5
+                </div>
+                <p className="text-gray-600 text-sm dark:text-white">
+                  "{item.feedback}"
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+        // <ul className="space-y-3">
+        //   {feedback.map((item, index) => (
+        //     <li
+        //       key={index}
+        //       className="bg-gray-100 p-4 rounded-lg shadow-sm transition hover:bg-gray-200"
+        //     >
+        //       {item.feedback}
+        //     </li>
+        //   ))}
+        // </ul>
+      )}
+
+      {/* Pagination */}
+
+      <section className="bg-gray-800 text-white py-12 dark:bg-gray-900">
+        <div className="max-w-3xl mx-auto text-center px-4">
+          <h2 className="text-2xl font-bold mb-4">Ready to Hit the Road?</h2>
+          <p className="text-gray-300 mb-6">
+            Join thousands of satisfied customers who trust BookMyBike for their
+            rental needs. Book your perfect ride today!
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              to="vehicle"
+              className="px-6 py-3 border-1 border-gray-400   text-gray-400 font-semibold rounded-lg shadow hover:bg-gray-700 transition flex items-center justify-center gap-2"
+            >
+              🔍 Browse Vehicles
+            </Link>
+            <a
+              // https://wa.me/.... whatsapp tel for call
+
+              href=" https://wa.me/91999999999"
+              target="_blank"
+              className="px-6 py-3  font-semibold rounded-lg shadow hover:bg-yellow-700 transition flex items-center bg-yellow-600 justify-center gap-2"
+            >
+              📞 Call Us Now
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default CustomerReview;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+AIzaSyAdnnbBXp6PaEdXObeBmhfc670WjK5th8w
+
+
+
+
+<section className="py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">What Our Guests Say</h2>
+          <div className="text-yellow-400 text-2xl mb-2">⭐⭐⭐⭐⭐</div>
+          <p className="text-lg text-gray-600 mb-16">4.9/5 from 2,500+ reviews</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <div className="bg-white p-8 rounded-xl shadow-lg">
+              <div className="text-yellow-400 mb-4">⭐⭐⭐⭐⭐</div>
+              <p className="text-gray-600 mb-6 italic">
+                "I was nervous booking remotely, but RentEasy handled everything. 
+                When the AC broke, they sent help within an hour. Amazing!"
+              </p>
+              <div className="flex items-center justify-center">
+                <img 
+                  className="w-12 h-12 rounded-full mr-4" 
+                  src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" 
+                  alt="Sarah" 
+                />
+                <div>
+                  <div className="font-bold text-gray-900">Sarah Thompson</div>
+                  <div className="text-sm text-gray-500">Verified Guest</div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white p-8 rounded-xl shadow-lg">
+              <div className="text-yellow-400 mb-4">⭐⭐⭐⭐⭐</div>
+              <p className="text-gray-600 mb-6 italic">
+                "Every photo was exactly as shown. The local guide they sent 
+                helped us find the best restaurants. Will book again!"
+              </p>
+              <div className="flex items-center justify-center">
+                <img 
+                  className="w-12 h-12 rounded-full mr-4" 
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" 
+                  alt="Mike" 
+                />
+                <div>
+                  <div className="font-bold text-gray-900">Mike Johnson</div>
+                  <div className="text-sm text-gray-500">Verified Guest</div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white p-8 rounded-xl shadow-lg">
+              <div className="text-yellow-400 mb-4">⭐⭐⭐⭐⭐</div>
+              <p className="text-gray-600 mb-6 italic">
+                "Finally, a rental company that cares! No hidden fees, 
+                great support, spotless property. Highly recommend!"
+              </p>
+              <div className="flex items-center justify-center">
+                <img 
+                  className="w-12 h-12 rounded-full mr-4" 
+                  src="https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" 
+                  alt="Emily" 
+                />
+                <div>
+                  <div className="font-bold text-gray-900">Emily Davis</div>
+                  <div className="text-sm text-gray-500">Verified Guest</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+
+
+
+
+
+
+
+
+
+
+      import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
+import { GrFormPrevious } from "react-icons/gr";
+import { MdOutlineNavigateNext } from "react-icons/md";
+const TOTAL_PAGES = 4; // Ideally, get this from API response
+
+const CustomerReview = () => {
+  const [feedback, setFeedback] = useState<any[]>([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [fade, setFade] = useState(false);
+  const [prefetchCache, setPrefetchCache] = useState<Record<number, any[]>>({});
+
+  // Fetch feedback for current page
+  useEffect(() => {
+    let isMounted = true;
+    setFade(false); // start fade out
+
+    const timer = setTimeout(() => {
+      setLoading(true);
+
+      // Check if data is prefetched
+      if (prefetchCache[page]) {
+        if (isMounted) {
+          setFeedback(prefetchCache[page]);
+          setLoading(false);
+          setFade(true); // fade in
+        }
+      } else {
+        axios
+          .get(`http://localhost:5000/api/get/users/feedback?page=${page}`)
+          .then((res) => {
+            if (isMounted) {
+              setFeedback(res.data);
+              setLoading(false);
+              setFade(true); // fade in
+              // Cache the data
+              setPrefetchCache((prev) => ({ ...prev, [page]: res.data }));
+            }
+          })
+          .catch((err) => {
+            console.error("Error fetching feedback:", err);
+            if (isMounted) setLoading(false);
+          });
+      }
+    }, 200); // delay for fade out
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, [page, prefetchCache]);
+  function getPaginationPages(
+    current: number,
+    total: number,
+    maxPagesToShow = 7
+  ) {
+    const pages = [];
+
+    if (total <= maxPagesToShow) {
+      // Show all pages
+      for (let i = 1; i <= total; i++) pages.push(i);
+    } else {
+      const left = Math.max(2, current - 2);
+      const right = Math.min(total - 1, current + 2);
+
+      pages.push(1);
+
+      if (left > 2) {
+        pages.push("left-ellipsis");
+      }
+
+      for (let i = left; i <= right; i++) {
+        pages.push(i);
+      }
+
+      if (right < total - 1) {
+        pages.push("right-ellipsis");
+      }
+
+      pages.push(total);
+    }
+
+    return pages;
+  }
+
+  // Prefetch next page data
+  useEffect(() => {
+    const nextPage = page + 1;
+    if (nextPage <= TOTAL_PAGES && !prefetchCache[nextPage]) {
+      axios
+        .get(`http://localhost:5000/api/get/users/feedback?page=${nextPage}`)
+        .then((res) => {
+          setPrefetchCache((prev) => ({ ...prev, [nextPage]: res.data }));
+        })
+        .catch(() => {
+          // ignore errors in prefetch
+        });
+    }
+  }, [page, prefetchCache]);
+
+  // Generate page numbers dynamically
+  // const pageNumbers = Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1);
+  const pageNumbers = getPaginationPages(page, TOTAL_PAGES);
+  return (
+    <div>
+      {loading ? (
+        <div className="text-center py-10">
+          <div className="loader mx-auto mb-2" />
+          <p className="text-gray-500 italic">Loading...</p>
+        </div>
+      ) : (
+        <section className="py-12 dark:bg-gray-900 dark:text-white">
+          <h2 className="text-center text-2xl font-bold text-gray-800 mb-8 dark:text-yellow-600 ">
+            What Our Customers Say
+          </h2>
+
+          {/* Pagination */}
+
+          {/* Feedback grid with fade animation */}
+          <div
+            className={`max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 px-4 transition-opacity duration-500 ${
+              fade ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            {feedback.map((item, idx) => (
+              <div
+                className="bg-white dark:bg-gray-800   p-8 rounded-xl shadow-lg"
+                key={idx}
+              >
+                <div className="text-yellow-400 mb-4">⭐⭐⭐⭐⭐</div>
+                <p className="text-gray-600 dark:text-gray-300 mb-6 italic">
+                  "{item.feedback}"
+                </p>
+                <div className="flex items-center justify-center">
+                  <img
+                    className="w-12 h-12 rounded-full mr-4"
+                    src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    alt="Sarah"
+                  />
+                  <div>
+                    <div className="font-bold text-gray-900 dark:text-gray-100">
+                      {/* <div className="font-bold text-gray-900 dark:text-amber-400"> */}
+                      {item.username}
+                    </div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      Verified User
+                    </div>
+                  </div>
+                </div>
+              </div>
+              // <div
+              //   key={idx}
+              //   className="bg-white dark:bg-gray-900 rounded-lg shadow p-6 text-center dark:border-1 dark:border-gray-600"
+              // >
+              //   <div className="flex justify-center mb-2">
+              //     <img
+              //       src="/WhatsApp Image 2025-08-25 at 21.37.48_ec58ca97.jpg"
+              //       alt="avatar"
+              //       className="w-12 h-12 rounded-full"
+              //     />
+              //   </div>
+              //   <h3 className="font-semibold text-gray-800 dark:text-white">
+              //     {item.username}
+              //   </h3>
+              //   <div className="flex justify-center my-2 text-yellow-500">
+              //     {item.rating}/5
+              //   </div>
+              //   <p className="text-gray-600 text-sm dark:text-white">
+              //     "{item.feedback}"
+              //   </p>
+              // </div>
+            ))}
+          </div>
+          <div className="flex justify-center items-center gap-2 mt-6">
+            <button
+              aria-label="Previous page"
+              disabled={page === 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              className={`px-3 py-1 rounded-md border flex justify-center items-center  ${
+                page === 1
+                  ? "bg-amber-200 dark:bg-gray-400 text-gray-400 dark:text-gray-100 dark:border-gray-100 cursor-not-allowed "
+                  : "bg-amber-500 dark:bg-yellow-600 dark:hover:bg-yellow-700  hover:bg-amber-600 text-gray-700"
+              }`}
+            >
+              <GrFormPrevious size={22} /> Prev
+            </button>
+
+            {/* {pageNumbers.map((num) => (
+              <button
+                key={num}
+                aria-current={page === num ? "page" : undefined}
+                onClick={() => setPage(num)}
+                className={`px-3 py-1 rounded-md border ${
+                  page === num
+                    ? "bg-yellow-500 text-white border-yellow-500"
+                    : "bg-white hover:bg-gray-100 text-gray-700"
+                }`}
+              >
+                {num}
+              </button>
+            ))} */}
+            {pageNumbers.map((p, idx) =>
+              p === "left-ellipsis" || p === "right-ellipsis" ? (
+                <span key={idx} className="ellipsis">
+                  ...
+                </span>
+              ) : (
+                <button
+                  key={idx}
+                  className={`px-3 py-1 rounded-md border ${
+                    page === p
+                      ? "bg-orange-500 dark:bg-yellow-600 text-white border-yellow-500 dark:border-yellow-600"
+                      : "bg-white hover:bg-gray-100 text-gray-700 dark:bg-gray-400"
+                  }`}
+                  onClick={() => setPage(p as number)}
+                >
+                  {p}
+                </button>
+              )
+            )}
+
+            <button
+              aria-label="Next page"
+              disabled={page === TOTAL_PAGES}
+              onClick={() => setPage((p) => Math.min(TOTAL_PAGES, p + 1))}
+              className={`px-3 py-1 rounded-md border flex justify-center items-center ${
+                page === TOTAL_PAGES
+                  ? "bg-amber-200 dark:bg-gray-400 text-gray-400 dark:text-gray-100 dark:border-gray-100 cursor-not-allowed"
+                  : "bg-amber-500 dark:bg-yellow-600 dark:hover:bg-yellow-700  hover:bg-amber-600 text-gray-700"
+              }`}
+            >
+              Next <MdOutlineNavigateNext size={22} />
+            </button>
+          </div>
+        </section>
+      )}
+
+      {/* Call to action section */}
+      <section className="bg-gray-800 text-white py-12 dark:bg-gray-900">
+        <div className="max-w-3xl mx-auto text-center px-4">
+          <h2 className="text-2xl font-bold mb-4">Ready to Hit the Road?</h2>
+          <p className="text-gray-300 mb-6">
+            Join thousands of satisfied customers who trust BookMyBike for their
+            rental needs. Book your perfect ride today!
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              to="vehicle"
+              className="px-6 py-3 border-1 border-gray-400 text-gray-400 font-semibold rounded-lg shadow hover:bg-gray-700 transition flex items-center justify-center gap-2"
+            >
+              🔍 Browse Vehicles
+            </Link>
+            <a
+              // href="https://wa.me/91999999999"
+              href="tel:+917536018155"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 font-semibold rounded-lg shadow hover:bg-yellow-700 transition flex items-center bg-yellow-600 justify-center gap-2"
+            >
+              📞 Call Us Now
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Loader CSS */}
+      <style>{`
+        .loader {
+          border: 4px solid #f3f3f3;
+          border-top: 4px solid #fbbf24; /* yellow-400 */
+          border-radius: 50%;
+          width: 36px;
+          height: 36px;
+          animation: spin 1s linear infinite;
+          margin: 0 auto;
+        }
+        @keyframes spin {
+          0% { transform: rotate(0deg);}
+          100% { transform: rotate(360deg);}
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default CustomerReview;

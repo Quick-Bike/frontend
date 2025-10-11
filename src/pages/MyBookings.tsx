@@ -1,0 +1,141 @@
+import React from "react";
+
+export default function MyBookings() {
+  const vehicle = {
+    name: "Ntorq 125",
+    cc: "125cc",
+    mileage: "40 kmpl",
+    gear: "Automatic",
+    image: "/YNtorq.png",
+  };
+
+  // ---- amounts ----
+  const baseRental = 1000; // rental incl. taxes
+  const gst = 60; // 5%
+  const sgst = 30; // 2.5%
+  const cgst = 30; // 2.5%
+  const deposit = 2000;
+  const totalPayable = baseRental + deposit;
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center p-6">
+      {/* Step Progress */}
+      <div className="flex items-center justify-center mb-8 text-gray-600 text-sm">
+        <span className="font-medium text-gray-400">Select Vehicle</span>
+        <div className="w-10 border-t-2 border-gray-300 mx-2"></div>
+        <span className="font-semibold text-blue-600">Booking Details</span>
+        <div className="w-10 border-t-2 border-gray-300 mx-2"></div>
+        <span className="font-medium text-gray-400">Payment</span>
+      </div>
+
+      {/* Equal Height & Width Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-6xl items-stretch">
+        {/* Left Card */}
+        <div className="flex flex-col flex-1 bg-white shadow rounded-2xl p-6">
+          <img
+            src={vehicle.image}
+            alt={vehicle.name}
+            className="w-60 mx-auto mb-4 object-contain"
+          />
+
+          <h2 className="text-xl font-bold mb-3 text-gray-800">
+            {vehicle.name}
+          </h2>
+          <div className="flex gap-4 text-sm text-gray-600 mb-4">
+            <span>🏍️ {vehicle.cc}</span>
+            <span>⛽ {vehicle.mileage}</span>
+            <span>⚙️ {vehicle.gear}</span>
+          </div>
+
+          <div className="border-t pt-4 mb-4 flex-1">
+            <h3 className="font-semibold text-gray-700 mb-2">
+              Booking Duration
+            </h3>
+            <div className="flex items-center gap-2 text-gray-600">
+              📅 Friday, 05 Sep 10:00 AM → Sunday, 07 Sep 10:00 AM
+            </div>
+          </div>
+
+          <div className="border-t pt-4">
+            <h3 className="font-semibold text-gray-700 mb-2">Add-ons</h3>
+            <label className="flex items-center gap-2 text-gray-600">
+              <input type="checkbox" checked readOnly className="rounded" />{" "}
+              Helmet
+            </label>
+          </div>
+
+          <div className="mt-6 flex gap-6 text-sm text-gray-500">
+            <span>✔️ Verified Vehicle</span>
+            <span>✔️ 24/7 Support</span>
+          </div>
+        </div>
+
+        {/* Right Card */}
+        <div className="flex flex-col flex-1 bg-white shadow-xl rounded-2xl p-6">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">
+            Payment Summary
+          </h2>
+
+          {/* Rental & Tax Detail */}
+          <div className="text-gray-700 text-sm space-y-2 mb-4">
+            <div className="flex justify-between">
+              <span>Rental Cost</span>
+              <span className="font-medium">₹{baseRental}</span>
+            </div>
+            <div className="ml-4 text-gray-500">
+              <div>Includes taxes:</div>
+              <div className="flex justify-between ml-4">
+                <span>GST (5%)</span> <span>₹{gst}</span>
+              </div>
+              <div className="flex justify-between ml-4">
+                <span>SGST (2.5%)</span> <span>₹{sgst}</span>
+              </div>
+              <div className="flex justify-between ml-4">
+                <span>CGST (2.5%)</span> <span>₹{cgst}</span>
+              </div>
+            </div>
+            <div className="flex justify-between pt-2">
+              <span>Refundable Deposit</span>
+              <span className="font-medium">₹{deposit}</span>
+            </div>
+          </div>
+
+          <div className="my-3 h-px bg-gray-200"></div>
+
+          {/* Total */}
+          <div className="bg-gray-50 rounded-lg p-4 flex justify-between items-center">
+            <div>
+              <p className="font-semibold text-gray-800">Total Payable</p>
+              <p className="text-xs text-gray-500">
+                Pay ₹{totalPayable} now (₹{deposit} refundable after trip)
+              </p>
+            </div>
+            <p className="text-lg font-bold text-gray-900">₹{totalPayable}</p>
+          </div>
+
+          {/* Cancellation Policy */}
+          <div className="mt-4 bg-yellow-50 text-yellow-700 rounded-lg p-3 text-sm flex gap-2">
+            ⚠️{" "}
+            <span>
+              Cancellation Policy: 20% of rental cost (₹
+              {Math.round(baseRental * 0.2)}) is deducted if booking is
+              cancelled. Security deposit refunded in full.
+            </span>
+          </div>
+
+          {/* Info line to fill empty space */}
+          <p className="text-xs text-gray-500 text-center mt-3">
+            🔒 Secure Payment • 100% Safe & Encrypted
+          </p>
+
+          {/* Button */}
+          <div className="mt-auto">
+            <button className="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg shadow mt-2">
+              Proceed to Payment
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
