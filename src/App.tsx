@@ -5,7 +5,8 @@ import Footer from "./components/Footer";
 import { Outlet, ScrollRestoration } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import FetchingAllData from "./hooks/FetchingAllData";
-import ScrollToTop from "./components/scrollToTop";
+
+
 function App() {
   useDarkmode();
   return (
