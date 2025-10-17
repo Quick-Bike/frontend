@@ -55,7 +55,7 @@ body,
     background-image: url("glacierBgOrange.jpg");
   }
   100% {
-    background-image: url("redBikeBg.jpg");
+    background-image: url("Bike.png");
     /* background-image: url("https://res.cloudinary.com/dumreogj3/image/upload/v1758445600/redBgBike_i1mcer.jpg"); */
   }
 }

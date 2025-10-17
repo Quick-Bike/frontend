@@ -58,7 +58,11 @@ export default function ProfileDropdown() {
       >
         {firstLetter}
       </button>
-      {!open && <div className="md:hidden">{user.name}</div>}
+      {!open && (
+        <div className="md:hidden truncate max-w-[160px] sm:break-words sm:max-w-none">
+          {user.name}
+        </div>
+      )}
 
       {/* Dropdown */}
       {open && (
@@ -86,7 +90,7 @@ export default function ProfileDropdown() {
             </div>
 
             <div>
-              <p className="font-semibold dark:text-gray-300 text-gray-800">
+              <p className="font-semibold dark:text-gray-300 text-gray-800 truncate max-w-[160px] sm:break-words sm:max-w-none">
                 {user.name}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-300">

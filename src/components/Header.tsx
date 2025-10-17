@@ -34,7 +34,7 @@ const Header = () => {
         <div className="flex items-center gap-2">
           <img src={logo} alt="logo" className="w-10 h-10 rounded-full" />
           <h1 className="text-xl md:text-2xl font-bold cursor-pointer">
-            Book My Bike Online
+            QuickRentalBike
           </h1>
         </div>
         <ul className="hidden md:flex gap-20">

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const OurFleet = () => {
   const [activeCard, setActiveCard] = useState(0);
@@ -184,10 +185,10 @@ const OurFleet = () => {
                       /day
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+                  {/* <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
                     <div className="w-2 h-2 bg-green-600 dark:bg-green-400 rounded-full animate-pulse"></div>
                     <span className="text-sm font-medium">Available Now</span>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="flex gap-4 flex-wrap">
@@ -207,9 +208,9 @@ const OurFleet = () => {
                       />
                     </svg>
                   </button>
-                  <button className="px-6 md:px-8 py-3 md:py-4 border-2 border-yellow-600 dark:border-yellow-400 text-yellow-700 dark:text-yellow-400 font-bold rounded-full hover:bg-yellow-600 hover:text-white dark:hover:bg-yellow-400 dark:hover:text-black transition-all duration-300 backdrop-blur-sm">
+                  {/* <button className="px-6 md:px-8 py-3 md:py-4 border-2 border-yellow-600 dark:border-yellow-400 text-yellow-700 dark:text-yellow-400 font-bold rounded-full hover:bg-yellow-600 hover:text-white dark:hover:bg-yellow-400 dark:hover:text-black transition-all duration-300 backdrop-blur-sm">
                     Learn More
-                  </button>
+                  </button> */}
                 </div>
               </div>
 
@@ -274,9 +275,6 @@ const OurFleet = () => {
 
                   {/* Enhanced theme-aware content */}
                   <div className="absolute bottom-0 left-0 right-0 p-6 text-gray-900 dark:text-white">
-                    <div className="inline-block px-3 py-1 bg-yellow-500/20 dark:bg-yellow-400/20 backdrop-blur-sm rounded-full text-yellow-700 dark:text-yellow-400 text-xs font-semibold mb-3 border border-yellow-500/30 dark:border-yellow-400/30">
-                      AVAILABLE
-                    </div>
                     <h3 className="text-2xl font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-yellow-700 to-orange-600 dark:from-yellow-300 dark:to-orange-400">
                       {item.type}
                     </h3>
@@ -294,9 +292,12 @@ const OurFleet = () => {
                         </span>
                       </div>
 
-                      <button className="px-4 md:px-6 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 dark:from-yellow-400 dark:to-orange-500 text-white dark:text-black font-semibold rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 hover:scale-110 shadow-lg text-sm md:text-base">
+                      <Link
+                        to="/vehicle"
+                        className="px-4 md:px-6 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 dark:from-yellow-400 dark:to-orange-500 text-white dark:text-black font-semibold rounded-full  group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 hover:scale-110 shadow-lg text-sm md:text-base"
+                      >
                         Book Now
-                      </button>
+                      </Link>
                     </div>
                   </div>
 

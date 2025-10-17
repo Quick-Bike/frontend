@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAppSelector } from "../hooks/selectorHook";
 import axiosInstance from "../api/axiosInstance";
 import React from "react";
@@ -35,6 +35,7 @@ declare global {
 
 const BookingDetails: React.FC = () => {
   const user = useAppSelector((state) => state.user.userInfo);
+  const navigate = useNavigate();
 
   const location = useLocation();
   const state = location.state as LocationState | null;
@@ -104,11 +105,11 @@ const BookingDetails: React.FC = () => {
 
       const rzp = new window.Razorpay(options);
       rzp.open();
+      navigate("/", { replace: true });
     } catch (err) {
       console.error("Payment error:", err);
     }
   };
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 dark:white flex flex-col items-center p-6">
       {/* Step Progress */}
