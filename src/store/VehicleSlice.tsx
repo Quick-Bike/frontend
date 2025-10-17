@@ -1,5 +1,31 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-const initialState = {
+
+// Define slot type for booking info
+interface BookedSlot {
+  pickUpDate: string;
+  pickUpTime: string;
+  dropOffDate: string;
+  dropOffTime: string;
+}
+
+// Define vehicle type
+interface Vehicle {
+  id: string;
+  type: string;
+  bookedSlots: BookedSlot[];
+  availableFrom: string | null; // ISO string or null
+  // add other vehicle fields if needed
+}
+
+// State type
+interface VehicleState {
+  all: Vehicle[];
+  filtered: Vehicle[];
+  loader: boolean;
+  availableBikes: Vehicle[];
+}
+
+const initialState: VehicleState = {
   all: [],
   filtered: [],
   loader: false,
@@ -17,18 +43,14 @@ const VehicleSlice = createSlice({
       }
       state.filtered = state.all.filter((item) => item.type === action.payload);
     },
-    addingVehicles: (state, action) => {
-      // console.log(action, state, action.payload);
+    addingVehicles: (state, action: PayloadAction<Vehicle[]>) => {
       state.all = action.payload;
       state.filtered = action.payload;
-      // return action.payload;
     },
     loaderTrue: (state) => {
-      console.log("true");
       state.loader = true;
     },
     loaderFalse: (state) => {
-      console.log("false");
       state.loader = false;
     },
     addingAvailableBikes: (
@@ -46,7 +68,6 @@ const VehicleSlice = createSlice({
       const requestedEnd = new Date(dropOffDate + "T" + dropOffTime).getTime();
 
       const updatedBikes = state.all.map((vehicle) => {
-        // Check if vehicle is booked during requested period
         const overlappingSlots = vehicle.bookedSlots.filter((slot) => {
           const slotStart = new Date(
             slot.pickUpDate + "T" + slot.pickUpTime
@@ -58,10 +79,8 @@ const VehicleSlice = createSlice({
         });
 
         if (overlappingSlots.length === 0) {
-          // Vehicle is available, no availableFrom needed
           return { ...vehicle, availableFrom: null };
         } else {
-          // Vehicle is not available, find the latest dropOffDate/time among overlapping slots
           const latestDropOff = overlappingSlots.reduce((latest, slot) => {
             const slotEnd = new Date(
               slot.dropOffDate + "T" + slot.dropOffTime
@@ -69,17 +88,16 @@ const VehicleSlice = createSlice({
             return slotEnd > latest ? slotEnd : latest;
           }, 0);
 
-          // Convert latestDropOff back to ISO string or desired format
           const availableFromDate = new Date(latestDropOff).toISOString();
 
           return { ...vehicle, availableFrom: availableFromDate };
         }
       });
 
-      // Optionally, you can separate available and unavailable bikes or keep all together
       state.availableBikes = updatedBikes;
     },
   },
 });
+
 export const VehicleList_Action = VehicleSlice.actions;
 export default VehicleSlice.reducer;

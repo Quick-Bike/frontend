@@ -3,16 +3,16 @@ import useEmailNumberValidator from "../hooks/useEmailNumberValidator";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { GoogleLogin } from "@react-oauth/google";
-import axios from "axios";
 import useGoogleAuth from "../hooks/useGoogleAuth";
 import { useDispatch } from "react-redux";
-import { userSliceACtion } from "../store/UserSlice";
+import { userSliceActions } from "../store/UserSlice";
+import axiosInstance from "../api/axiosInstance";
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [inValidMailNumber, setinValidMailNumber] = useState(false);
   const { isTenDigitNumber, validateEmail } = useEmailNumberValidator();
-  const loginFormSubmit = async (e) => {
+  const loginFormSubmit = async (e: any) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
@@ -37,16 +37,14 @@ const Login = () => {
     }
     try {
       console.log("call-backend", data);
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/user/login",
-        data,
-        { withCredentials: true }
-      );
-      dispatch(userSliceACtion.setUser(res.data));
+      const res = await axiosInstance.post("/api/auth/user/login", data, {
+        withCredentials: true,
+      });
+      dispatch(userSliceActions.setUser(res.data));
       toast.success("Logged In Succesfully", { position: "top-right" });
       navigate("/");
       console.log("Request to backend", res);
-    } catch (err) {
+    } catch (err: any) {
       toast.error(`${err.response?.data?.message}`, {
         position: "top-right",
       });

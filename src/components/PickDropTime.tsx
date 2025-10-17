@@ -1,6 +1,21 @@
 import { useEffect } from "react";
 
-const PickDropTime = ({
+import type { Dispatch, SetStateAction, RefObject } from "react";
+
+interface PickDropTimeProps {
+  setpickUptime: Dispatch<SetStateAction<string>>;
+  pickUpTime: string;
+  setPickUpState: Dispatch<SetStateAction<boolean>>;
+  pickUpState: boolean;
+  pickupRef: RefObject<HTMLDivElement | null>; // allow null
+  dropoffRef: RefObject<HTMLDivElement | null>; // allow null
+  dropOffTime: string;
+  setDropOfftime: Dispatch<SetStateAction<string>>;
+  dropOffState: boolean;
+  setDropOffState: Dispatch<SetStateAction<boolean>>;
+}
+
+const PickDropTime: React.FC<PickDropTimeProps> = ({
   setpickUptime,
   pickUpTime,
   setPickUpState,
@@ -13,20 +28,24 @@ const PickDropTime = ({
   setDropOffState,
 }) => {
   useEffect(() => {
-    function handleClickOutside(e) {
-      if (pickupRef.current && !pickupRef.current.contains(e.target)) {
+    function handleClickOutside(e: MouseEvent) {
+      if (pickupRef.current && !pickupRef.current.contains(e.target as Node)) {
         setPickUpState(false);
       }
-      if (dropoffRef.current && !dropoffRef.current.contains(e.target)) {
+      if (
+        dropoffRef.current &&
+        !dropoffRef.current.contains(e.target as Node)
+      ) {
         setDropOffState(false);
       }
     }
 
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
-  }, []);
+  }, [pickupRef, dropoffRef, setPickUpState, setDropOffState]);
+
   const generateTimeOptions = () => {
-    const times = [];
+    const times: string[] = [];
     const start = 5;
     const end = 22;
 
@@ -40,13 +59,13 @@ const PickDropTime = ({
     }
     return times;
   };
+
   const timeOptions = generateTimeOptions();
+
   return (
     <>
-      {/* Pickup Time */}
       <div>
         <label className="block font-medium mb-1">Pickup Time</label>
-        {/* Select box */}
         <div ref={pickupRef} className="relative w-full">
           <div
             className="w-full px-3 py-2 border rounded-lg focus:ring-2 dark:bg-gray-300 focus:ring-orange-500 cursor-pointer select-none"
@@ -63,7 +82,7 @@ const PickDropTime = ({
             role="button"
           >
             {pickUpTime || "Select time"}
-          </div>{" "}
+          </div>
           <div
             className={`absolute mt-1 w-full max-h-48 overflow-y-auto bg-white dark:bg-gray-300 border rounded-lg shadow-lg z-10 transition-all duration-300 ease-in-out origin-top transform ${
               pickUpState
@@ -102,16 +121,14 @@ const PickDropTime = ({
           </div>
         </div>
       </div>
-      {/* Drop-off Time (no restriction) */}
 
       <div>
         <label className="block font-medium mb-1">Drop-off Time</label>
         <div className="relative w-full" ref={dropoffRef}>
-          {/* Select box */}
           <div
             className="w-full px-3 py-2 border rounded-lg focus:ring-2 dark:bg-gray-300 focus:ring-orange-500 cursor-pointer select-none"
             onClick={() => setDropOffState((prev) => !prev)}
-            tabIndex={0} // make div focusable for accessibility
+            tabIndex={0}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();
@@ -125,11 +142,10 @@ const PickDropTime = ({
             {dropOffTime || "Select time"}
           </div>
 
-          {/* Dropdown with smooth transition */}
           <div
             className={`absolute mt-1 w-full max-h-48 overflow-y-auto bg-white dark:bg-gray-300 border rounded-lg shadow-lg z-10 transition-all duration-300 ease-in-out origin-top transform ${
               dropOffState
-                ? "opacity-100 scale-y-100 z-1000 pointer-events-auto "
+                ? "opacity-100 scale-y-100 z-1000 pointer-events-auto"
                 : "opacity-0 scale-y-0 pointer-events-none"
             }`}
             role="listbox"
@@ -167,4 +183,5 @@ const PickDropTime = ({
     </>
   );
 };
+
 export default PickDropTime;

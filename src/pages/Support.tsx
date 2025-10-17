@@ -1,7 +1,4 @@
-import React from "react";
-
 const fadeInUpClasses = `opacity-0 translate-y-6 animate-fadeInUp animation-fill-forwards`;
-
 export default function Support() {
   return (
     <div className="min-h-screen w-full flex flex-col items-center bg-white dark:bg-gray-900 transition-colors p-4">
@@ -27,7 +24,7 @@ export default function Support() {
           {
             title: "Chat support",
             desc: "Our support team is just a click away.",
-            link: "#chat",
+            link: "",
             linkText: "Chat now →",
             delay: "animation-delay-200",
           },

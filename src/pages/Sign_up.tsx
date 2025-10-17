@@ -1,11 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
 
 import useEmailNumberValidator from "../hooks/useEmailNumberValidator";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
 import { GoogleLogin } from "@react-oauth/google";
 import useGoogleAuth from "../hooks/useGoogleAuth";
+import axiosInstance from "../api/axiosInstance";
 
 const Sign_up = () => {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ const Sign_up = () => {
     }, 1000);
     return () => clearTimeout(handler); // cleanup on new keystroke
   }, [confirmPassword]);
-  const signUpFormSubmit = async (e) => {
+  const signUpFormSubmit = async (e: any) => {
     e.preventDefault();
     if (password.length < 6) {
       toast.warn("Your password must contain at least 6 character");
@@ -55,15 +55,13 @@ const Sign_up = () => {
       console.log(data);
       try {
         setLoader(true);
-        const res = await axios.post(
-          "http://localhost:5000/api/auth/user/register",
-          data,
-          { withCredentials: true }
-        );
+        const res = await axiosInstance.post("/api/auth/user/register", data, {
+          withCredentials: true,
+        });
         setLoader(false);
         console.log("Request to backend", res);
-        navigate("/otp");
-      } catch (err) {
+        navigate("/otp", { state: 2 });
+      } catch (err: any) {
         toast.error(`${err.response?.data?.message}`, {
           position: "top-right",
         });
@@ -197,7 +195,7 @@ const Sign_up = () => {
                   required
                   id="confirmPassword"
                   type="password"
-                  onChange={(e) => setconfirmPassword(e.target.value)}
+                  onChange={(e: any) => setconfirmPassword(e.target.value)}
                   placeholder="Confirm Password"
                   className="w-full px-4 py-2 border border-gray-300 rounded-xl 
                              focus:ring-2 focus:ring-yellow-400 focus:outline-none pr-10 

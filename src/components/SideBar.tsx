@@ -1,33 +1,46 @@
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
 import ProfileDropdown from "../pages/ProfileDropdown";
-import { useState } from "react";
-export default function Sidebar({
+
+interface HeaderItem {
+  field: string;
+  URL: string;
+}
+
+interface SidebarProps {
+  isOpen: boolean;
+  setisOpen: (value: boolean) => void;
+  headerItems: HeaderItem[];
+  userStatus: boolean;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({
   isOpen,
   setisOpen,
   headerItems,
   userStatus,
-}) {
-  // console.log(headerItems);
-  const [aboutDrop, setAboutDrop] = useState(false);
-  const [expandedItem, setExpandedItem] = useState(null);
+}) => {
+  const [expandedItem, setExpandedItem] = useState<number | null>(null);
 
-  const handleItemClick = (item, index) => {
+  const handleItemClick = (item: HeaderItem, index: number) => {
     if (item.field === "About") {
       setExpandedItem(expandedItem === index ? null : index);
     } else {
       setisOpen(false); // Close menu when navigating to other pages
     }
   };
+
   const clickHandlerOffSet = () => {
     setisOpen(false);
   };
+
   return (
     <div className="dark:bg-gray-900 text-white">
       {/* Overlay */}
       <div
         onClick={() => clickHandlerOffSet()}
-        className={`fixed inset-0  bg-opacity-50 backdrop-blur-sm transition-opacity duration-500 ${
+        className={`fixed inset-0 bg-opacity-50 backdrop-blur-sm transition-opacity duration-500 ${
           isOpen
             ? "opacity-100 pointer-events-auto z-50"
             : "opacity-0 pointer-events-none"
@@ -35,13 +48,12 @@ export default function Sidebar({
       ></div>
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-full w-64 bg-white shadow-lg  transform transition-transform duration-500 ease-in-out dark:bg-gray-900 dark:text-white text-gray-700 will-change-transform`}
+        className={`fixed top-0 left-0 z-50 h-full w-64 bg-white shadow-lg transform transition-transform duration-500 ease-in-out dark:bg-gray-900 dark:text-white text-gray-700 will-change-transform`}
         style={{
           transform: isOpen ? "translateX(0)" : "translateX(-100%)",
           backfaceVisibility: "hidden",
         }}
       >
-        {/* Header */}
         {/* Header */}
         <div className="p-6 flex items-center justify-between border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-gray-800 dark:to-gray-900">
           <h2 className="text-xl font-bold text-gray-800 dark:text-white">
@@ -50,6 +62,7 @@ export default function Sidebar({
           <button
             onClick={() => clickHandlerOffSet()}
             className="p-2 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200 shadow-sm"
+            aria-label="Close menu"
           >
             <svg
               className="w-5 h-5 text-gray-600 dark:text-gray-300"
@@ -85,6 +98,7 @@ export default function Sidebar({
                     <button
                       onClick={() => handleItemClick(item, index)}
                       className="w-full group flex items-center justify-between px-4 py-3 text-left rounded-xl hover:bg-gradient-to-r hover:from-orange-50 hover:to-yellow-50 dark:hover:from-gray-800 dark:hover:to-gray-700 text-gray-700 dark:text-white transition-all duration-200 border-2 border-transparent hover:border-orange-200 dark:hover:border-gray-600"
+                      aria-expanded={expandedItem === index}
                     >
                       <div className="flex items-center space-x-3">
                         <div className="w-2 h-2 bg-orange-400 rounded-full group-hover:bg-orange-500 transition-colors"></div>
@@ -170,26 +184,10 @@ export default function Sidebar({
 
         {/* Bottom Section */}
         <div className="p-6 border-t border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-orange-50 dark:from-gray-800 dark:to-gray-900 h-10">
-          <button className="group h-1 flex items-center space-x-3 w-full px-4  text-gray-600 dark:text-gray-400 hover:text-orange-600 dark:hover:text-yellow-400 hover:bg-white dark:hover:bg-gray-700 rounded-xl transition-all duration-200 border-2 border-transparent hover:border-orange-200 dark:hover:border-gray-600">
-            {/* <div className="p-2 bg-gray-200 dark:bg-gray-600 group-hover:bg-orange-200 dark:group-hover:bg-yellow-600 rounded-lg transition-colors">
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                />
-              </svg>
-              <ThemeToggle />
-            </div> */}
+          <div className="group h-1 flex items-center space-x-3 w-full px-4 text-gray-600 dark:text-gray-400 hover:text-orange-600 dark:hover:text-yellow-400 hover:bg-white dark:hover:bg-gray-700 rounded-xl transition-all duration-200 border-2 border-transparent hover:border-orange-200 dark:hover:border-gray-600">
             <ThemeToggle />
             <span className="font-medium">Toggle Theme</span>
-          </button>
+          </div>
         </div>
         <div className="p-4 space-y-6">
           {!userStatus && (
@@ -202,7 +200,7 @@ export default function Sidebar({
               </button>
               <button
                 onClick={() => clickHandlerOffSet()}
-                className="w-full border border-orange-500 text-orange-600 dark:text-yellow-600 py-2 rounded-lg hover:bg-orange-50 transition dark:border dark:border-yellow-600 "
+                className="w-full border border-orange-500 text-orange-600 dark:text-yellow-600 py-2 rounded-lg hover:bg-orange-50 transition dark:border dark:border-yellow-600"
               >
                 <Link to="/sign-up">Sign Up</Link>
               </button>
@@ -212,4 +210,6 @@ export default function Sidebar({
       </aside>
     </div>
   );
-}
+};
+
+export default Sidebar;

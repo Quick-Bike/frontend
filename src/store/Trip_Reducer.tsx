@@ -1,11 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
-import VehicleSlice from "./VehicleSlice";
-import userSlice from "./UserSlice";
+import vehicleSlice from "./VehicleSlice";
+import userSlice from "./UserSlice"; // remove .tsx extension here
+
 const TripStore = configureStore({
   reducer: {
-    vehicle_slice: VehicleSlice,
+    vehicle_slice: vehicleSlice,
     user: userSlice,
   },
 });
+
+// Export inferred RootState and AppDispatch types
+export type RootState = ReturnType<typeof TripStore.getState>;
+export type AppDispatch = typeof TripStore.dispatch;
 
 export default TripStore;

@@ -1,6 +1,12 @@
+// import React from "react";
 import { Link } from "react-router-dom";
 
-export default function AuthPopup({ isOpen, onClose }) {
+type AuthPopupProps = {
+  isOpen: boolean;
+  onClose: (value: boolean) => void;
+};
+
+export default function AuthPopup({ isOpen, onClose }: AuthPopupProps) {
   if (!isOpen) return null;
 
   return (
@@ -47,10 +53,9 @@ export default function AuthPopup({ isOpen, onClose }) {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes blob {
-          0%,
-          100% {
+          0%, 100% {
             transform: translate(0, 0) scale(1);
           }
           33% {

@@ -1,17 +1,22 @@
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
 import { VehicleList_Action } from "../store/VehicleSlice";
-import { userSliceACtion } from "../store/UserSlice";
+import { userSliceActions } from "../store/UserSlice";
+import axiosInstance from "../api/axiosInstance";
+import { useAppDispatch, useAppSelector } from "./selectorHook";
 // const [sort, setSort] = useState("Recommended");
 
 const useFetchVehicle = () => {
-  const dispatch = useDispatch();
+  const baseURL = import.meta.env.VITE_url;
+  console.log("url", baseURL);
+  // Use it in axios instance or anywhere else
+
+  const dispatch = useAppDispatch();
   useEffect(() => {
     const fetchVehicle = async () => {
       dispatch(VehicleList_Action.loaderTrue());
-      const res = await axios.get("http://localhost:5000/product/vehicle/get");
-      console.log(res);
+      // const res = await axios.get("http://localhost:5000/product/vehicle/get");
+      const res = await axiosInstance.get("product/vehicle/get");
+      console.log("check", res);
       dispatch(VehicleList_Action.addingVehicles(res.data));
       dispatch(VehicleList_Action.loaderFalse());
     };
@@ -20,23 +25,20 @@ const useFetchVehicle = () => {
 };
 
 const useFetchUSerData = () => {
-  const user = useSelector((state) => state.user);
-  const dispatch = useDispatch();
+  const user = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
   useEffect(() => {
     const seeingTheuserTesting = async () => {
       console.log("i was there");
       try {
         if (!user.isLoggedIn) {
-          const res = await axios.get(
-            "http://localhost:5000/api/auth/user/get",
-            {
-              withCredentials: true,
-            }
-          );
-          dispatch(userSliceACtion.setUser(res.data));
+          const res = await axiosInstance.get("api/auth/user/get", {
+            withCredentials: true,
+          });
+          dispatch(userSliceActions.setUser(res.data));
         }
         // console.log("i am res user", res);
-      } catch (err) {
+      } catch (err: any) {
         console.log(err.response);
       }
     };

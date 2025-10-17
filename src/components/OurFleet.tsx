@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 
 const OurFleet = () => {
   const [activeCard, setActiveCard] = useState(0);
-  const [hoveredCard, setHoveredCard] = useState(null);
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
   const containerRef = useRef(null);
@@ -49,7 +49,7 @@ const OurFleet = () => {
   }, []);
 
   // Mouse tracking for parallax effects
-  const handleMouseMove = (e) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     setMousePosition({
       x: ((e.clientX - rect.left) / rect.width - 0.5) * 20,
@@ -312,7 +312,7 @@ const OurFleet = () => {
       </div>
 
       {/* Enhanced CSS animations */}
-      <style jsx>{`
+      <style>{`
         @keyframes float {
           0%,
           100% {

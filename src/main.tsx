@@ -6,22 +6,24 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./pages/Login.tsx";
 import Sign_up from "./pages/Sign_up.tsx";
 import Showing_Home from "./pages/Home_Page.tsx";
-import ForgotPassword from "./pages/Forgot_Password.tsx";
+import ForgotPassword from "./pages/Forgot_Password.jsx";
+
 import Otp_Page from "./pages/Otp_Page.tsx";
 import { Provider } from "react-redux";
 import TripStore from "./store/Trip_Reducer.tsx";
 import Vehicle_Page from "./pages/Vehicle_Page.tsx";
 import ShowAvailableBikes from "./pages/ShowAvailableBikes.tsx";
 import BookingDetails from "./pages/BookingDetails.tsx";
-const clientId =
-  "202588708462-d2fgc9h4uskv3sehqscjve1akink49r8.apps.googleusercontent.com";
+const clientId = import.meta.env.VITE_CLIENT_ID;
+// console.log("id", id);
+// const clientId =
+// "202588708462-d2fgc9h4uskv3sehqscjve1akink49r8.apps.googleusercontent.com";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import MyOrders from "./pages/MyOrders.tsx";
 import Support from "./pages/Support.tsx";
 import TermsAndConditions from "./pages/TermsAndConditions.tsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
 import AboutUsPremium from "./pages/AboutUs.tsx";
-import BookingPage from "./pages/RazorpayPayment.tsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -43,7 +45,6 @@ const router = createBrowserRouter([
       { path: "terms/condition", element: <TermsAndConditions /> },
       { path: "privacy/policy", element: <PrivacyPolicy /> },
       { path: "about-us", element: <AboutUsPremium /> },
-      { path: "payment", element: <BookingPage /> },
     ],
   },
 ]);

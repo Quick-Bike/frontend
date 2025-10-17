@@ -1,25 +1,59 @@
-// import React from "react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
-import useEmailNumberValidator from "../hooks/useEmailNumberValidator";
 import { useRef, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import useEmailNumberValidator from "../hooks/useEmailNumberValidator";
 import { toast } from "react-toastify";
-export default function ForgotPassword() {
-  const email_number = useRef("");
+import axios from "axios";
+
+export default function ForgotPassword(): React.JSX.Element {
+  // Ref for input element
+  const email_number = useRef<HTMLInputElement>(null);
+  const [loader, setLoader] = useState<boolean>(false);
   const { validateEmail, isTenDigitNumber } = useEmailNumberValidator();
-  const [invalid, setInvalid] = useState(false);
-  const otpHandler = () => {
-    if (!isTenDigitNumber(email_number.current.value as string)) {
-      if (!validateEmail(email_number.current.value as string)) {
-        setInvalid(true);
+  // const [invalid, setInvalid] = useState<boolean>(false);
+  const navigate = useNavigate();
+
+  const otpHandler = async (): Promise<void> => {
+    if (!email_number.current) return;
+
+    setLoader(true);
+
+    const value = email_number.current.value.trim();
+    const payload: { email?: string; mobileNo?: string } = {};
+
+    if (!isTenDigitNumber(value)) {
+      payload.email = value;
+      if (!validateEmail(value)) {
+        // setInvalid(true);
         toast.warn("Enter Correct Email/Number", { position: "top-right" });
+        setLoader(false);
         return;
       }
-      navigate("/otp");
-      console.log("Request to backend");
+      console.log("Request to backend with email");
+    } else {
+      payload.mobileNo = value;
+      console.log("Request to backend with mobile number");
+    }
+
+    try {
+      // Send request to backend with payload
+      console.log("request to backend", payload);
+      // Example: await axios.post("/api/request-otp", payload);
+      await axios.post(
+        "http://localhost:5000/api/auth/user/forget-password",
+        payload
+      );
+
+      setLoader(false);
+      navigate("/otp", { state: 1 });
+      // On success, navigate to OTP page
+      // navigate("/otp");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoader(false);
     }
   };
-  const navigate = useNavigate();
+
   return (
     <div className="flex items-center justify-center min-h-[60vh] md:min-h-[70vh] bg-gray-100 dark:bg-gray-900">
       <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md dark:bg-gray-800 dark:text-white">
@@ -30,7 +64,6 @@ export default function ForgotPassword() {
           Enter your registered email/number to get OTP.
         </p>
 
-        {/* Email Input */}
         <input
           type="text"
           ref={email_number}
@@ -38,15 +71,14 @@ export default function ForgotPassword() {
           className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400 mb-4"
         />
 
-        {/* Send OTP Button */}
         <button
           onClick={otpHandler}
-          className="w-full bg-yellow-500 text-white py-2 rounded-xl font-semibold hover:bg-yellow-600 transition"
+          disabled={loader}
+          className="w-full bg-yellow-500 text-white py-2 rounded-xl font-semibold hover:bg-yellow-600 transition disabled:opacity-50"
         >
-          Send OTP
+          {loader ? "Sending..." : "Send OTP"}
         </button>
 
-        {/* Back to Login */}
         <p className="text-center text-gray-600 mt-6 text-sm">
           Remember your password?{" "}
           <Link

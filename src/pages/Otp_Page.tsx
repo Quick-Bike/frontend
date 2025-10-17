@@ -1,64 +1,78 @@
-import axios from "axios";
 import React, { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { userSliceACtion } from "../store/UserSlice";
+import { userSliceActions } from "../store/UserSlice";
 import { toast } from "react-toastify";
-export default function OtpPage() {
+import axiosInstance from "../api/axiosInstance";
+
+const OtpPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
+  const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
 
-  // constants
   const length = 6;
   const pattern = /^\d*$/; // allow only digits
   const inputs = inputsRef.current;
+  const location = useLocation();
+  const state = location.state as number | undefined;
 
-  // verify OTP
-  const verifyOtp = async (finalOtp: string) => {
+  const verifyOtp = async (finalOtp: string): Promise<void> => {
     if (finalOtp.length < length) {
       alert("Please enter full OTP");
       return;
     }
-    const otp = finalOtp;
     console.log("Verifying OTP:", finalOtp);
-    const res = await axios.post(
-      "http://localhost:5000/api/auth/user/verify",
-      { otp: otp },
-      { withCredentials: true }
-    );
-
-    console.log(res);
-    dispatch(userSliceACtion.setUser(res.data));
-    toast.success("Account created successfully", {
-      position: "top-right",
-    });
-    navigate("/");
-    // 🚨 Call backend here
+    try {
+      let res;
+      if (state === 2) {
+        res = await axiosInstance.post(
+          "/api/auth/user/verify",
+          { otp: finalOtp },
+          { withCredentials: true }
+        );
+      } else if (state === 1) {
+        res = await axiosInstance.post(
+          "/api/auth/user/resetpassword",
+          { otp: finalOtp },
+          { withCredentials: true }
+        );
+        res.data = res.data.user;
+      } else {
+        toast.error("Invalid request state", { position: "top-right" });
+        return;
+      }
+      dispatch(userSliceActions.setUser(res?.data));
+      toast.success(
+        `${
+          state === 2
+            ? "Account created successfully"
+            : "Logged in successfully"
+        }`,
+        { position: "top-right" }
+      );
+      navigate("/");
+    } catch (err: any) {
+      toast.error(`${err.response?.data?.message || err.message}`, {
+        position: "top-right",
+      });
+    }
   };
 
-  // implementing handle change
-  const handleChange = (value: string, index: number) => {
+  const handleChange = (value: string, index: number): void => {
     if (!pattern.test(value)) return; // Only allow digits
-
-    let newOtp = [...otp];
+    const newOtp = [...otp];
     newOtp[index] = value;
-
     setOtp(newOtp);
-
-    // Move to the next input field
     if (value && index < length - 1) {
       inputs[index + 1]?.focus();
     }
   };
 
-  // handling paste
-  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>): void => {
     e.preventDefault();
     const paste = e.clipboardData.getData("text");
-    if (!pattern.test(paste)) return; // Only allow digits
-
+    if (!pattern.test(paste)) return;
     const newOtp = paste.slice(0, length).split("");
     for (let i = 0; i < length; i++) {
       if (inputs[i]) inputs[i]!.value = newOtp[i] || "";
@@ -69,17 +83,15 @@ export default function OtpPage() {
     setOtp(newOtp);
   };
 
-  // handling delete + arrow keys
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
     index: number
-  ) => {
+  ): void => {
     if (e.key === "Backspace") {
       e.preventDefault();
-      let newOtp = [...otp];
+      const newOtp = [...otp];
       newOtp[index] = "";
       setOtp(newOtp);
-
       if (index > 0) {
         inputs[index - 1]?.focus();
       }
@@ -106,7 +118,9 @@ export default function OtpPage() {
               inputMode="numeric"
               maxLength={1}
               value={digit}
-              ref={(input) => (inputs[index] = input)}
+              ref={(input) => {
+                inputs[index] = input; // assign but return void
+              }}
               onChange={(e) => handleChange(e.target.value, index)}
               onKeyDown={(e) => handleKeyDown(e, index)}
               onPaste={handlePaste}
@@ -123,7 +137,7 @@ export default function OtpPage() {
         </button>
 
         <p className="text-center text-gray-600 mt-6 text-sm">
-          Didn’t receive the OTP?{" "}
+          Didn't receive the OTP?{" "}
           <button className="text-yellow-600 font-semibold hover:underline">
             Resend
           </button>
@@ -131,4 +145,6 @@ export default function OtpPage() {
       </div>
     </div>
   );
-}
+};
+
+export default OtpPage;

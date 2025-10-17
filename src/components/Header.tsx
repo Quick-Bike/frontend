@@ -18,7 +18,8 @@ const Header = () => {
   //   { field: "📦 About", URL: "/about" },
   //   { field: "📞 Contact", URL: "/contact" },
   // ];
-  const userLogged = useSelector((state) => state.user.isLoggedIn);
+  const userLogged = useSelector((state: any) => state.user.isLoggedIn);
+
   // console.log("status", userLogged);
   const [menuOpen, setMenuOpen] = useState(false);
   const [aboutDrop, setAboutDrop] = useState(false);
@@ -89,12 +90,7 @@ const Header = () => {
                       Terms & Conditions
                     </Link>
                     <a
-                      onClick={() =>
-                        window.open(
-                          "https://www.google.co.in/maps/place/Pahadi+Rides+%E2%80%93+Bike,+Bullet+%26+Scooty+Rentals+in+Pithoragarh/@29.583329,80.2070243,19.33z/data=!4m15!1m8!3m7!1s0x39a125c00088dd51:0x2b781d30a1523c63!2sPithoragarh,+Uttarakhand!3b1!8m2!3d29.5828604!4d80.2181884!16zL20vMDljX3R3!3m5!1s0x39a125cc58d61d9d:0x9a32f4ee2ebb392d!8m2!3d29.5832251!4d80.2071811!16s%2Fg%2F11ltnp30vg?entry=ttu&g_ep=EgoyMDI1MDkyNC4wIKXMDSoASAFQAw%3D%3D",
-                          "_blank"
-                        )
-                      }
+                      onClick={() => window.open(link, "_blank")}
                       rel="noopener noreferrer"
                       className="block px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 cursor-pointer"
                     >

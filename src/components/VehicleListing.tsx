@@ -1,27 +1,41 @@
+import type { FC } from "react";
 import { useState } from "react";
+import type { Vehicle } from "../hooks/vehicle";
+import { useSelector } from "react-redux";
+import AuthPopup from "../pages/AuthPop";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import AuthPopup from "../pages/AuthPop";
-import { useSelector } from "react-redux";
 
-export default function VehicleListing({
+export interface TimeRange {
+  pickUpDate: string;
+  pickUpTime: string;
+  dropOffDate: string;
+  dropOffTime: string;
+}
+
+interface VehicleListingProps {
+  AvailableVehicles: Vehicle[];
+  availabilty: boolean;
+  time: TimeRange; // accept TimeRange, not primitive
+}
+
+const VehicleListing: FC<VehicleListingProps> = ({
   AvailableVehicles,
   availabilty,
   time,
-}) {
-  const [authOpen, setIsAuthOpen] = useState(false);
-  const userLogged = useSelector((state) => state.user.isLoggedIn);
-  console.log("user-status", userLogged);
-  // console.log(AvailableVehicles);
-  const formattingDates = (data) => {
+}) => {
+  const [authOpen, setIsAuthOpen] = useState<boolean>(false);
+  const userLogged = useSelector(
+    (state: any) => state.user.isLoggedIn
+  ) as boolean;
+  const navigate = useNavigate();
+
+  const formattingDates = (data: string | Date) => {
     const date = new Date(data);
     return date.toLocaleDateString("en-GB");
   };
-  const navigate = useNavigate();
-  const onBookNowHandler = (v) => {
-    // {
 
-    // }
+  const onBookNowHandler = (v: Vehicle) => {
     if (!userLogged) {
       setIsAuthOpen(true);
     } else {
@@ -32,13 +46,16 @@ export default function VehicleListing({
       navigate("/booking-details", { state: context });
     }
   };
+
   const onAvailiabilyButtonHandler = () => {
     toast.info("Enter your details first", {
       position: "top-right",
     });
     navigate("/");
   };
-  const notAvailableHandler = (date) => {
+
+  const notAvailableHandler = (date: string | null | undefined) => {
+    if (!date) return;
     toast.warn(
       `This will be available after ${formattingDates(date).replace(
         /\//g,
@@ -46,13 +63,7 @@ export default function VehicleListing({
       )}`
     );
   };
-  // // en-GB gives dd/mm/yyyy
 
-  // const formattedTime = date.toLocaleTimeString("en-US", {
-  //   hour: "2-digit",
-  //   minute: "2-digit",
-  //   hour12: true,
-  // });
   return (
     <div className="dark:bg-gray-900 dark:text-white transition-colors duration-500 bg-white ">
       <div className=" px-6 py-10 max-w-7xl mx-auto ">
@@ -70,20 +81,6 @@ export default function VehicleListing({
                 className="w-full h-40 object-contain transition-transform duration-300 hover:scale-110"
               />
 
-              {/* Thumbs */}
-              {/* <div className="flex gap-2 justify-center mt-3">
-              {v.thumbs.map((t, i) => (
-                <img
-                  key={i}
-                  src={t}
-                  className={`w-12 h-12 border rounded-lg p-1 transition duration-300 hover:border-orange-400 hover:scale-105 ${
-                    i === 0 ? "border-orange-400" : ""
-                  }`}
-                  alt="thumb"
-                />
-              ))}
-            </div> */}
-
               {/* Info */}
               <h2 className="text-lg font-semibold mt-3">{v.name}</h2>
               <p className="text-orange-500 text-sm">
@@ -99,7 +96,6 @@ export default function VehicleListing({
               </div>
               {/* Button */}
               {!availabilty ? (
-                // {/* <ShoppingCart size={18} /> Book Now */}{" "}
                 v.availableFrom ? (
                   <button
                     onClick={() => notAvailableHandler(v.availableFrom)}
@@ -131,4 +127,6 @@ export default function VehicleListing({
       </div>
     </div>
   );
-}
+};
+
+export default VehicleListing;

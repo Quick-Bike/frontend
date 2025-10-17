@@ -1,58 +1,56 @@
 import React from "react";
-import VehicleListing from "../components/VehicleListing";
-import { useSelector } from "react-redux";
+import { useAppSelector } from "../hooks/selectorHook";
 import { useLocation } from "react-router-dom";
-const ShowAvailableBikes = () => {
+import VehicleListing from "../components/VehicleListing";
+import type { Vehicle, BookedSlot } from "../hooks/vehicle";
+import type { TimeRange } from "../components/VehicleListing";
+
+interface VehicleState {
+  all: Vehicle[];
+  filtered: Vehicle[];
+  loader: boolean;
+  availableBikes: Vehicle[];
+}
+
+const ShowAvailableBikes: React.FC = () => {
   const location = useLocation();
-  const times = location.state;
-  const items = useSelector((state) => state.vehicle_slice);
-  const availableBikes = React.useMemo(() => {
-    if (!times || !items.all) return [];
+  const times = location.state as TimeRange; // guaranteed defined by navigation
 
-    const requestedStart = new Date(
-      times.pickUpDate + "T" + times.pickUpTime
-    ).getTime();
-    const requestedEnd = new Date(
-      times.dropOffDate + "T" + times.dropOffTime
-    ).getTime();
+  const items = useAppSelector((state) => state.vehicle_slice) as VehicleState;
 
-    const updatedBikes = items.all.map((vehicle) => {
-      const overlappingSlots = vehicle.bookedSlots.filter((slot) => {
-        const slotStart = new Date(
-          slot.pickUpDate + "T" + slot.pickUpTime
-        ).getTime();
-        const slotEnd = new Date(
-          slot.dropOffDate + "T" + slot.dropOffTime
-        ).getTime();
-        return requestedStart < slotEnd && slotStart < requestedEnd;
+  const availableBikes = React.useMemo<Vehicle[]>(() => {
+    const { pickUpDate, pickUpTime, dropOffDate, dropOffTime } = times;
+    const start = new Date(`${pickUpDate}T${pickUpTime}`).getTime();
+    const end = new Date(`${dropOffDate}T${dropOffTime}`).getTime();
+
+    return items.all.map((v) => {
+      const overlap = v.bookedSlots.some((s: BookedSlot) => {
+        const sStart = new Date(`${s.pickUpDate}T${s.pickUpTime}`).getTime();
+        const sEnd = new Date(`${s.dropOffDate}T${s.dropOffTime}`).getTime();
+        return start < sEnd && sStart < end;
       });
-
-      if (overlappingSlots.length === 0) {
-        return { ...vehicle, availableFrom: null };
-      } else {
-        const latestDropOff = overlappingSlots.reduce((latest, slot) => {
-          const slotEnd = new Date(
-            slot.dropOffDate + "T" + slot.dropOffTime
-          ).getTime();
-          return slotEnd > latest ? slotEnd : latest;
-        }, 0);
-
-        const availableFromDate = new Date(latestDropOff).toISOString();
-
-        return { ...vehicle, availableFrom: availableFromDate };
-      }
+      return {
+        ...v,
+        availableFrom: overlap
+          ? new Date(
+              Math.max(
+                ...v.bookedSlots.map((s) =>
+                  new Date(`${s.dropOffDate}T${s.dropOffTime}`).getTime()
+                )
+              )
+            ).toISOString()
+          : null,
+      };
     });
-
-    return updatedBikes;
   }, [times, items.all]);
+
   return (
-    <>
-      <VehicleListing
-        AvailableVehicles={availableBikes}
-        availabilty={false}
-        time={times}
-      />
-    </>
+    <VehicleListing
+      AvailableVehicles={availableBikes}
+      availabilty={false}
+      time={times}
+    />
   );
 };
+
 export default ShowAvailableBikes;

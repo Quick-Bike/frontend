@@ -2,7 +2,7 @@ import "./App.css";
 import Header from "./components/Header";
 import useDarkmode from "./hooks/useDarkmode";
 import Footer from "./components/Footer";
-import { data, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import FetchingAllData from "./hooks/FetchingAllData";
 function App() {

@@ -1,24 +1,16 @@
-"use client";
-import axios from "axios";
 import { useState, useRef, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { userSliceACtion } from "../store/UserSlice";
+import { useAppDispatch, useAppSelector } from "../hooks/selectorHook"; // your typed hooks
+import { userSliceActions } from "../store/UserSlice";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-
-type User = {
-  name: string;
-  avatar?: string; // optional image URL
-};
+import axiosInstance from "../api/axiosInstance";
 
 export default function ProfileDropdown() {
-  // 👇 demo user
-  // const user: User = { name: "Jyoti" /* avatar: "/user-avatar.png" */ };
-  const user = useSelector((store) => store.user.userInfo);
-  console.log("user", user);
+  const user = useAppSelector((state) => state.user.userInfo);
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -29,26 +21,28 @@ export default function ProfileDropdown() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  if (!user) {
+    return null; // or loading state if user data is async
+  }
+
   const firstLetter = user.name.charAt(0).toUpperCase();
+
   const onClickLogoutHandler = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:5000/api/auth/user/logout",
-        {
-          withCredentials: true,
-        }
-      );
-      dispatch(userSliceACtion.clearUser());
+      const res = await axiosInstance.get("/api/auth/user/logout", {
+        withCredentials: true,
+      });
+      dispatch(userSliceActions.clearUser());
       toast.info("Logged Out", { position: "top-right" });
       console.log("logout", res);
-    } catch (err) {
+    } catch (err: any) {
       console.log("message", err.response?.data);
     }
   };
-  return (
-    <div className="relative flex gap-10 items-center md:block " ref={menuRef}>
-      {/* Trigger */}
 
+  return (
+    <div className="relative flex gap-10 items-center md:block" ref={menuRef}>
+      {/* Trigger */}
       <button
         onClick={() => setOpen(!open)}
         className="
@@ -62,15 +56,7 @@ export default function ProfileDropdown() {
           transition
         "
       >
-        {user.avatar ? (
-          <img
-            src={user.avatar}
-            alt={user.name}
-            className="h-10 w-10 rounded-full object-cover"
-          />
-        ) : (
-          firstLetter
-        )}
+        {firstLetter}
       </button>
       {!open && <div className="md:hidden">{user.name}</div>}
 
@@ -84,8 +70,8 @@ export default function ProfileDropdown() {
             md:left-auto
             absolute md:right-0 mt-2
             w-60 sm:w-64
-             dark:bg-gray-900
-             dark:text-white
+            dark:bg-gray-900
+            dark:text-white
             rounded-xl border border-orange-200
             dark:border-gray-600
             bg-white shadow-lg
@@ -95,17 +81,10 @@ export default function ProfileDropdown() {
         >
           {/* Top user box */}
           <div className="flex items-center gap-3 p-4 border-b dark:border-gray-700 border-gray-400">
-            {user.avatar ? (
-              <img
-                src={user.avatar}
-                alt={user.name}
-                className="w-20 rounded-full object-cover border  border-orange-300"
-              />
-            ) : (
-              <div className="h-12 w-12 flex items-center justify-center rounded-full dark:bg-yellow-600 bg-gray-900  text-white text-lg font-semibold">
-                {firstLetter}
-              </div>
-            )}
+            <div className="h-12 w-12 flex items-center justify-center rounded-full dark:bg-yellow-600 bg-gray-900 text-white text-lg font-semibold">
+              {firstLetter}
+            </div>
+
             <div>
               <p className="font-semibold dark:text-gray-300 text-gray-800">
                 {user.name}
@@ -114,10 +93,6 @@ export default function ProfileDropdown() {
                 Welcome back
               </p>
             </div>
-            {/* Optional small logo/icon */}
-            {/* <div className="ml-auto">
-              <img src="newLogo.jpg" alt="Logo" className="h-20 w-20" />
-            </div> */}
           </div>
 
           {/* Menu Items */}
@@ -127,27 +102,19 @@ export default function ProfileDropdown() {
                 to="/my-orders"
                 className="flex items-center gap-2 px-4 py-2 hover:bg-orange-50 dark:hover:bg-gray-800"
               >
-                <span className="material-icons text-orange-500"></span>
                 My Bookings
               </Link>
             </li>
             <li>
-              {/* <a
-                href="/my-coins"
-                className="flex items-center gap-2 px-4 py-2 hover:bg-orange-50"
-              > */}
-              <span className="material-icons text-orange-500"> </span>
-              <div className="flex items-center gap-2 px-6 py-2 hover:bg-orange-50 dark:hover:bg-gray-800 cursor-pointer">
-                My Coins : 0
+              <div className="flex items-center gap-2 px-4 py-2 hover:bg-orange-50 dark:hover:bg-gray-800 cursor-pointer">
+                My Coins : {user.myCoin}
               </div>
-              {/* </a> */}
             </li>
             <li>
               <button
                 onClick={() => onClickLogoutHandler()}
                 className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-orange-50 dark:hover:bg-gray-800 cursor-pointer"
               >
-                <span className="material-icons text-orange-500"></span>
                 Logout
               </button>
             </li>
