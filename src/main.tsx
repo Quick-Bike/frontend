@@ -14,9 +14,6 @@ import TripStore from "./store/Trip_Reducer.tsx";
 import Vehicle_Page from "./pages/Vehicle_Page.tsx";
 import ShowAvailableBikes from "./pages/ShowAvailableBikes.tsx";
 import BookingDetails from "./pages/BookingDetails.tsx";
-// console.log("id", id);
-// const clientId =
-// "202588708462-d2fgc9h4uskv3sehqscjve1akink49r8.apps.googleusercontent.com";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import MyOrders from "./pages/MyOrders.tsx";
 import Support from "./pages/Support.tsx";
