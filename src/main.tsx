@@ -14,7 +14,6 @@ import TripStore from "./store/Trip_Reducer.tsx";
 import Vehicle_Page from "./pages/Vehicle_Page.tsx";
 import ShowAvailableBikes from "./pages/ShowAvailableBikes.tsx";
 import BookingDetails from "./pages/BookingDetails.tsx";
-const clientId = import.meta.env.VITE_CLIENT_ID;
 // console.log("id", id);
 // const clientId =
 // "202588708462-d2fgc9h4uskv3sehqscjve1akink49r8.apps.googleusercontent.com";
@@ -24,6 +23,7 @@ import Support from "./pages/Support.tsx";
 import TermsAndConditions from "./pages/TermsAndConditions.tsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
 import AboutUsPremium from "./pages/AboutUs.tsx";
+const clientId = import.meta.env.VITE_CLIENT_ID;
 const router = createBrowserRouter([
   {
     path: "/",

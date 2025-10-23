@@ -1,4 +1,3 @@
-import logo from "/image.png";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
@@ -32,7 +31,11 @@ const Header = () => {
         {/* <nav className="dark:bg-gray-900 flex justify-between items-center px-6 py-3 shadow-2xl h-16 dark:border-b dark:border-gray-600 dark:text-white text-gray-900 "> */}
         {/* Logo and Title */}
         <div className="flex items-center gap-2">
-          <img src={logo} alt="logo" className="w-10 h-10 rounded-full" />
+          <img
+            src="https://res.cloudinary.com/dumreogj3/image/upload/v1761211712/quickRental_if6ome.jpg"
+            alt="logo"
+            className="w-10 h-10 rounded-full"
+          />
           <h1 className="text-xl md:text-2xl font-bold cursor-pointer">
             QuickRentalBike
           </h1>

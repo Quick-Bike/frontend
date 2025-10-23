@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000/", // <--- PUT YOUR API BASE URL HERE
+  baseURL: "https://rental-backend-mocha.vercel.app/", // <--- PUT YOUR API BASE URL HERE
   withCredentials: true, // if you use cookies
   timeout: 10000, // optional: timeout
 });
