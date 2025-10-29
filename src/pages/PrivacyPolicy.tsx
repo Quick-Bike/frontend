@@ -227,8 +227,8 @@ const PrivacyPolicy: React.FC = () => {
                     </p>
                     <div className="bg-white bg-opacity-100 dark:bg-gray-800 rounded-lg p-4 max-w-2xl mx-auto mt-6">
                         <p className="text-sm text-black dark:text-gray-300">
-                            <strong>Last Updated:</strong> April 1, 2024 |{" "}
-                            <strong className="ml-2">Effective Date:</strong> April 1, 2024
+                            <strong>Last Updated:</strong> April 1, 2025 |{" "}
+                            <strong className="ml-2">Effective Date:</strong> April 1, 2025
                         </p>
                     </div>
                 </div>
@@ -471,7 +471,7 @@ const PrivacyPolicy: React.FC = () => {
             <div className="bg-gray-800 text-white py-8">
                 <div className="max-w-4xl mx-auto px-6 text-center">
                     <p className="text-sm text-gray-300">
-                        © 2025 quickrentalbike. This privacy policy is designed to be
+                        © 2024 Bike Rentals. This privacy policy is designed to be
                         transparent and easy to understand.
                     </p>
                 </div>
